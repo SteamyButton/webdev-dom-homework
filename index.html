@@ -65,69 +65,131 @@
 
   <script>
     "use strict";
-
+    
     const addFormNameEl = document.querySelector('.add-form-name');
     const addFormTextEl = document.querySelector('.add-form-text');
     const addFormButtonEl = document.querySelector('.add-form-button');
     const commentsEl = document.querySelector('.comments');
 
     let userName = '';
-    let userText = '';
+    let userComment = '';
+
+    const comments = [
+      {
+        name: 'Глеб Фокин',
+        date: '12.02.22 12:18',
+        text: 'Это будет первый комментарий на этой странице',
+        likes: 3,
+        isLiked: false,
+      },
+
+      {
+        name: 'Варвара Н.',
+        date: '13.02.22 19:22',
+        text: 'Мне нравится как оформлена эта страница! ❤',
+        likes: 75,
+        isLiked: true,
+      },
+    ];
 
     addFormNameEl.addEventListener('input', () => {
       userName = addFormNameEl.value;
     });
 
     addFormTextEl.addEventListener('input', () => {
-      userText = addFormTextEl.value;
+      userComment = addFormTextEl.value;
     });
 
-    addFormButtonEl.addEventListener('click', () => {
-      if (userName.trim() === '' || userText.trim() === '') {
-        alert('Введите имя и комментарий');
-        return;
-      }
-
+    function getCurrentDate() {
       const currentDate = new Date();
 
-      const day = String(currentDate.getDate()).padStart(2, "0");
-      const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+      const day = String(currentDate.getDate()).padStart(2, '0');
+      const month = String(currentDate.getMonth() + 1).padStart(2, '0');
       const year = String(currentDate.getFullYear()).slice(-2);
-      const hours = String(currentDate.getHours()).padStart(2, "0");
-      const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+      const hours = String(currentDate.getHours()).padStart(2, '0');
+      const minutes = String(currentDate.getMinutes()).padStart(2, '0');
 
-      const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
+      return `${day}.${month}.${year} ${hours}:${minutes}`;
+    }
 
-      const newComment = `
+    function initLikeListeners() {
+      const likeButtonEl = document.querySelectorAll('.like-button');
+
+      likeButtonEl.forEach((likeButton) => {
+        likeButton.addEventListener('click', () => {
+          const commentIndex = Number(likeButton.dataset.index);
+          const comment = comments[commentIndex];
+
+          if (comment.isLiked) {
+            comment.likes -= 1;
+            comment.isLiked = false;
+          } else {
+            comment.likes += 1;
+            comment.isLiked = true;
+          }
+
+          renderComments();
+        });
+      });
+    }
+
+    function renderComments() {
+      const newComment = comments
+      .map((comment, index) => {
+        return `
         <li class="comment">
           <div class="comment-header">
-            <div>${userName}</div>
-            <div>${formattedDate}</div>
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
           </div>
 
           <div class="comment-body">
             <div class="comment-text">
-              ${userText}
+              ${comment.text}
             </div>
           </div>
 
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
+              <span class="likes-counter">${comment.likes}</span>
+              <button class="like-button ${comment.isLiked ? "-active-like" : ""}" data-index="${index}"></button>
             </div>
           </div>
         </li>
-      `;
+      `;})
+      .join('');
 
-      commentsEl.innerHTML += newComment;
+      commentsEl.innerHTML = newComment;
+
+      initLikeListeners();      
+    }
+
+    addFormButtonEl.addEventListener('click', () => {
+      if (userName.trim() === '' || userComment.trim() === '') {
+        alert('Введите имя и комментарий');
+        return;
+      }
+
+      const newComment = {
+        name: userName,
+        date: getCurrentDate(),
+        text: userComment,
+        likes: 0,
+        isLiked: false,
+      };
+
+      comments.push(newComment);
+
+      renderComments();
 
       addFormNameEl.value = '';
       addFormTextEl.value = '';
 
       userName = '';
-      userText = '';
-    })
+      userComment = '';
+    });
+
+    renderComments();
 
     console.log("It works!");
   </script>
