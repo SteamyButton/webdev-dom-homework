@@ -135,3 +135,14 @@ body {
   .add-form-button:hover {
     opacity: 0.9;
   }
+
+  .comment-quote {
+    margin: 0 0 12px;
+    padding-left: 12px;
+    font-style: italic;
+    font-size: 24px;
+  }
+
+  .comment-answer {
+    white-space: pre-line;
+  }
