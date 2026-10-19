@@ -1,18 +1,19 @@
-import { comments } from "./comments.js";
-import { escapeHtml } from "./escapeHtml.js";
+import { comments } from './exportOnly/comments.js';
+import { escapeHtml } from './exportOnly/escapeHtml.js';
+import { formatCommentDate } from './exportOnly/formatCommentDate.js';
 
-const commentsEl = document.querySelector(".comments");
+const commentsEl = document.querySelector('.comments');
 
 function formatCommentText(text) {
-  if (!text.startsWith(">")) {
-    return escapeHtml(text);
-  }
+    if (!text.startsWith('>')) {
+        return escapeHtml(text);
+    }
 
-  const textParts = text.split("\n\n");
-  const quote = textParts[0];
-  const answer = textParts.slice(1).join("\n\n");
+    const textParts = text.split('\n\n');
+    const quote = textParts[0];
+    const answer = textParts.slice(1).join('\n\n');
 
-  return `
+    return `
         <blockquote class='comment-quote'>
           ${escapeHtml(quote)}
         </blockquote>
@@ -24,13 +25,13 @@ function formatCommentText(text) {
 }
 
 export function renderComments() {
-  const newComment = comments
-    .map((comment, index) => {
-      return `
+    const newComment = comments
+        .map((comment, index) => {
+            return `
         <li class="comment" data-index="${index}">
           <div class="comment-header">
             <div>${escapeHtml(comment.name)}</div>
-            <div>${comment.date}</div>
+            <div>${formatCommentDate(comment.date)}</div>
           </div>
 
           <div class="comment-body">
@@ -42,13 +43,13 @@ export function renderComments() {
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likes}</span>
-              <button class="like-button ${comment.isLiked ? "-active-like" : ""}" data-index="${index}"></button>
+              <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index="${index}"></button>
             </div>
           </div>
         </li>
       `;
-    })
-    .join("");
+        })
+        .join('');
 
-  commentsEl.innerHTML = newComment;
+    commentsEl.innerHTML = newComment;
 }

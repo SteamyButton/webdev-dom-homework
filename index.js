@@ -1,12 +1,13 @@
-import { initFormListeners } from "./modules/getCommentData.js";
+import { initFormListeners } from "./modules/form.js";
+
 import {
-  addFormNameEl,
-  addFormTextEl,
   initLikeListeners,
   initCommentListeners,
   initAddCommentListener,
 } from "./modules/initListeners.js";
+
 import { renderComments } from "./modules/renderComments.js";
+import { loadComments } from "./modules/commentActions.js";
 
 function renderApp() {
   renderComments();
@@ -14,9 +15,18 @@ function renderApp() {
   initCommentListeners();
 }
 
-initFormListeners(addFormNameEl, addFormTextEl);
-initAddCommentListener(renderApp);
+async function startApp() {
+  initFormListeners();
+  initAddCommentListener(renderApp);
 
-renderApp();
+  try {
+    await loadComments();
+    renderApp();
+  } catch (error) {
+    alert(error.message);
+  }
+}
 
-console.log("It works!");
+startApp();
+
+console.log('It works!');
