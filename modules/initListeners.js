@@ -48,19 +48,20 @@ export function initAddCommentListener(renderApp) {
         const name = formState.userName.trim();
         const text = formState.userComment.trim();
 
-        try {
-            addFormButtonEl.disabled = true;
-            addFormButtonEl.textContent = 'Добавляем...';
+        addFormButtonEl.disabled = true;
+        addFormButtonEl.textContent = 'Добавляем...';
 
-            await addComment(name, text);
-
-            clearForm();
-            renderApp();
-        } catch (error) {
-            alert(error.message);
-        } finally {
-            addFormButtonEl.disabled = false;
-            addFormButtonEl.textContent = 'Написать';
-        }
+        addComment(name, text)
+            .then(() => {
+                clearForm();
+                renderApp();
+            })
+            .catch((error) => {
+                alert(error.message);
+            })
+            .finally(() => {
+                addFormButtonEl.disabled = false;
+                addFormButtonEl.textContent = 'Написать';
+            });
     });
 }
