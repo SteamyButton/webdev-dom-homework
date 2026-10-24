@@ -1,8 +1,7 @@
 import { comments } from './exportOnly/comments.js';
 import { escapeHtml } from './exportOnly/escapeHtml.js';
+import { commentsEl } from './exportOnly/elements.js';
 import { formatCommentDate } from './exportOnly/formatCommentDate.js';
-
-const commentsEl = document.querySelector('.comments');
 
 function formatCommentText(text) {
     if (!text.startsWith('>')) {

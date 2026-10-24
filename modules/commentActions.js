@@ -1,26 +1,27 @@
 import { comments, setComments } from './exportOnly/comments.js';
 import { getCommentsFromApi, postCommentToApi } from './api.js';
 
-export async function loadComments() {
-    const apiComments = await getCommentsFromApi();
+export function loadComments() {
+    return getCommentsFromApi().then((apiComments) => {
+        const preparedComments = apiComments.map((comment) => {
+            return {
+                id: comment.id,
+                name: comment.author.name,
+                date: comment.date,
+                text: comment.text,
+                likes: comment.likes,
+                isLiked: comment.isLiked,
+            };
+        });
 
-    const preparedComments = apiComments.map((comment) => {
-        return {
-            id: comment.id,
-            name: comment.author.name,
-            date: comment.date,
-            text: comment.text,
-            likes: comment.likes,
-            isLiked: comment.isLiked,
-        };
+        setComments(preparedComments);
     });
-
-    setComments(preparedComments);
 }
 
-export async function addComment(name, text) {
-    await postCommentToApi(name, text);
-    await loadComments();
+export function addComment(name, text) {
+    return postCommentToApi(name, text).then(() => {
+        return loadComments();
+    });
 }
 
 export function toggleLike(commentIndex) {
