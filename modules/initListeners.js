@@ -39,9 +39,9 @@ export function initCommentListeners() {
 }
 
 export function initAddCommentListener(renderApp) {
-    addFormButtonEl.addEventListener('click', async () => {
+    addFormButtonEl.addEventListener('click', () => {
         if (!validateForm()) {
-            alert('Имя и комментарий должны содержать хотя бы 3 символа');
+            alert('Имя и комментарий должны быть не короче 3 символов');
             return;
         }
 
@@ -57,7 +57,17 @@ export function initAddCommentListener(renderApp) {
                 renderApp();
             })
             .catch((error) => {
-                alert(error.message);
+                if (error.message === 'Сервер сломался') {
+                    alert('Сервер сломался, попробуй позже');
+                    return;
+                }
+
+                if (error.message === 'Плохой запрос') {
+                    alert('Имя и комментарий должны быть не короче 3 символов');
+                    return;
+                }
+
+                alert('Кажется, у вас сломался интернет, попробуйте позже');
             })
             .finally(() => {
                 addFormButtonEl.disabled = false;
