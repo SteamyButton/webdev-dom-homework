@@ -1,8 +1,12 @@
-import { comments, setComments } from './exportOnly/comments.js';
-import { getCommentsFromApi, postCommentToApi } from './api.js';
+import { setComments } from './exportOnly/comments.js';
+import {
+    getCommentsFromApi,
+    postCommentToApi,
+    toggleLikeInApi,
+} from './api.js';
 
-export function loadComments() {
-    return getCommentsFromApi().then((apiComments) => {
+export function loadComments(token) {
+    return getCommentsFromApi(token).then((apiComments) => {
         const preparedComments = apiComments.map((comment) => {
             return {
                 id: comment.id,
@@ -18,15 +22,14 @@ export function loadComments() {
     });
 }
 
-export function addComment(name, text) {
-    return postCommentToApi(name, text).then(() => {
-        return loadComments();
+export function addComment(text, token) {
+    return postCommentToApi(text, token).then(() => {
+        return loadComments(token);
     });
 }
 
-export function toggleLike(commentIndex) {
-    const comment = comments[commentIndex];
-
-    comment.likes += comment.isLiked ? -1 : 1;
-    comment.isLiked = !comment.isLiked;
+export function toggleLike(commentId, token) {
+    return toggleLikeInApi(commentId, token).then(() => {
+        return loadComments(token);
+    });
 }
