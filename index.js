@@ -29,7 +29,12 @@ function startApp() {
             renderApp();
         })
         .catch((error) => {
-            alert(error.message);
+            if (error.message === 'Сервер сломался') {
+                alert('Сервер сломался, попробуй позже');
+                return;
+            }
+
+            alert('Кажется, у вас сломался интернет, попробуйте позже');
         })
         .finally(() => {
             addFormButtonEl.disabled = false;

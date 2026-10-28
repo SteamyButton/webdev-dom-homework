@@ -4,8 +4,8 @@ const commentsUrl =
 export function getCommentsFromApi() {
     return fetch(commentsUrl)
         .then((response) => {
-            if (!response.ok) {
-                throw new Error('Не удалось загрузить комментарии');
+            if (response.status === 500) {
+                throw new Error('Сервер сломался');
             }
 
             return response.json();
@@ -16,27 +16,20 @@ export function getCommentsFromApi() {
 }
 
 export function postCommentToApi(name, text) {
-    let serverResponse;
-
     return fetch(commentsUrl, {
         method: 'POST',
         body: JSON.stringify({
             name,
             text,
         }),
-    })
-        .then((response) => {
-            serverResponse = response;
+    }).then((response) => {
+        if (response.status === 500) {
+            throw new Error('Сервер сломался');
+        }
 
-            return response.json();
-        })
-        .then((data) => {
-            if (!serverResponse.ok) {
-                throw new Error(
-                    data.error || 'Не удалось добавить комментарий',
-                );
-            }
-
-            return data;
-        });
+        if (response.status === 400) {
+            throw new Error('Плохой запрос');
+        }
+        return response.json();
+    });
 }
